@@ -37,8 +37,8 @@ class ChatController extends Controller
         })->orderBy('created_at', 'asc')
             ->get();
 
-        //count the number of unread messages
-        $status_count = $messages->where('status', 1)->count();
+        //count the number of unread messages for current user
+        $status_count = $messages->where('to_user_id',auth()->id())->where('status', 1)->count();
 
         //get messages list
         $messages = $messages->map(function ($message) {
@@ -48,6 +48,11 @@ class ChatController extends Controller
                 'status' => $message->status,
             ];
         });
+
+        //update the status of incoming messages to read
+        Chat::where('to_user_id', auth()->id())
+            ->where('from_user_id', $request->with_user_id)
+            ->update(['status' => 0]);
 
         return response()->json([
             'messages' => $messages,
