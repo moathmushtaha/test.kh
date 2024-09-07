@@ -28,30 +28,34 @@ class ChatController extends Controller
      */
     public function MessagesHistory(GetMessagesHistoryRequest $request)
     {
-        $messages = Chat::where(function ($query) use ($request) {
-            $query->where('from_user_id', auth()->id())
-                ->where('to_user_id', $request->with_user_id);
-        })->orWhere(function ($query) use ($request) {
-            $query->where('from_user_id', $request->with_user_id)
-                ->where('to_user_id', auth()->id());
+        $userId = auth()->id();
+        $withUserId = $request->with_user_id;
+
+        // Fetch messages between the authenticated user and the specified user
+        $messages = Chat::where(function ($query) use ($withUserId, $userId, $request) {
+            $query->where('from_user_id', $userId)
+                ->where('to_user_id', $withUserId);
+        })->orWhere(function ($query) use ($withUserId, $userId, $request) {
+            $query->where('from_user_id', $withUserId)
+                ->where('to_user_id', $userId);
         })->orderBy('created_at', 'asc')
             ->get();
 
-        //count the number of unread messages for current user
+        // Count unread messages for the current user
         $status_count = $messages->where('to_user_id',auth()->id())->where('status', 1)->count();
 
-        //get messages list
-        $messages = $messages->map(function ($message) {
+        // Get messages list
+        $messages = $messages->map(function ($message) use ($userId) {
             return [
-                'direction' => $message->from_user_id == auth()->id() ? 'outgoing' : 'incoming',
+                'direction' => $message->from_user_id == $userId ? 'outgoing' : 'incoming',
                 'text' => $message->message,
                 'status' => $message->status,
             ];
         });
 
-        //update the status of incoming messages to read
+        // Update the status of incoming messages to read
         Chat::where('to_user_id', auth()->id())
-            ->where('from_user_id', $request->with_user_id)
+            ->where('from_user_id', $withUserId)
             ->update(['status' => 0]);
 
         return response()->json([
