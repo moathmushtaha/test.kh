@@ -23,6 +23,8 @@ class GetMessagesHistoryRequest extends FormRequest
     {
         return [
             'with_user_id' => 'required|integer|exists:users,id',
+            'longitude' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric',
         ];
     }
 }

@@ -24,6 +24,8 @@ class NewMessageRequest extends FormRequest
         return [
             'message' => 'required|string|max:255',
             'to_user_id' => 'required|integer|exists:users,id',
+            'longitude' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric',
         ];
     }
 
