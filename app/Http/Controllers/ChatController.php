@@ -56,6 +56,7 @@ class ChatController extends Controller
         // Update the status of incoming messages to read
         Chat::where('to_user_id', auth()->id())
             ->where('from_user_id', $withUserId)
+            ->where('status', 1)
             ->update(['status' => 0]);
 
         return response()->json([
