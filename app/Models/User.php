@@ -45,4 +45,27 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    //Methods
+    public function updateLocation($location): void
+    {
+        $new_latitude = $location['latitude'];
+        $new_longitude = $location['longitude'];
+
+        if ($this->latitude == $new_latitude && $this->longitude == $new_longitude) {
+            return;
+        }
+
+        $this->latitude = $new_latitude;
+        $this->longitude = $new_longitude;
+        $this->save();
+    }
+
+    public function getLocation()
+    {
+        return [
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude
+        ];
+    }
 }
