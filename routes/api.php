@@ -14,5 +14,5 @@ Route::post('/sanctum/token', [AuthController::class, 'login']);
 Route::group(['middleware' => 'auth:sanctum'], function () {
     //chat routes
     Route::post('/chat/new-message', [ChatController::class, 'newMessage']);
-    Route::get('/chat/messages-history', [ChatController::class, 'MessagesHistory']);
+    Route::post('/chat/messages-history', [ChatController::class, 'MessagesHistory']);
 });
