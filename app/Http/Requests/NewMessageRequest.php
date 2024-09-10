@@ -24,15 +24,22 @@ class NewMessageRequest extends FormRequest
         return [
             'message' => 'required|string|max:255',
             'to_user_id' => 'required|integer|exists:users,id',
-            'longitude' => 'nullable|numeric',
             'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric'
         ];
     }
 
     public function passedValidation()
     {
         $this->merge([
-            'from_user_id' => auth()->id()
+            'from_user_id' => auth()->id(),
+            'latitude' => $this->latitude ?? null,
+            'longitude' => $this->longitude ?? null
         ]);
+
+        //TODO:delete after manual test
+        $this->server->add(['REMOTE_ADDR' => $this->ip]);
     }
+
+
 }

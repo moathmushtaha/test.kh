@@ -23,8 +23,19 @@ class GetMessagesHistoryRequest extends FormRequest
     {
         return [
             'with_user_id' => 'required|integer|exists:users,id',
-            'longitude' => 'nullable|numeric',
             'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric'
         ];
+    }
+
+    public function passedValidation()
+    {
+        $this->merge([
+            'latitude' => $this->latitude ?? null,
+            'longitude' => $this->longitude ?? null
+        ]);
+
+        //TODO:delete after manual test
+        $this->server->add(['REMOTE_ADDR' => $this->ip]);
     }
 }
