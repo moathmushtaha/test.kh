@@ -117,10 +117,19 @@
 				{
 					"name": "messages-history",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"with_user_id\": 3,\n    \"ip\":\"11.11.181.11\" //just for testing (removable)\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{host}}/api/chat/messages-history?with_user_id=4",
+							"raw": "{{host}}/api/chat/messages-history",
 							"host": [
 								"{{host}}"
 							],
@@ -128,12 +137,6 @@
 								"api",
 								"chat",
 								"messages-history"
-							],
-							"query": [
-								{
-									"key": "with_user_id",
-									"value": "4"
-								}
 							]
 						}
 					},
