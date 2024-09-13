@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasLocation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, HasLocation;
 
     /**
      * The attributes that are mass assignable.
@@ -47,25 +48,19 @@ class User extends Authenticatable
     }
 
     //Methods
-    public function updateLocation($location): void
+    public function getMessagesHistory($withUserId)
     {
-        $new_latitude = $location['latitude'];
-        $new_longitude = $location['longitude'];
+        $userId = $this->id;
 
-        if ($this->latitude == $new_latitude && $this->longitude == $new_longitude) {
-            return;
-        }
-
-        $this->latitude = $new_latitude;
-        $this->longitude = $new_longitude;
-        $this->save();
+        return Chat::where(function ($query) use ($withUserId, $userId) {
+            $query->where('from_user_id', $userId)
+                ->where('to_user_id', $withUserId);
+        })->orWhere(function ($query) use ($withUserId, $userId) {
+            $query->where('from_user_id', $withUserId)
+                ->where('to_user_id', $userId);
+        })
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
-    public function getLocation()
-    {
-        return [
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude
-        ];
-    }
 }
