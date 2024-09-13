@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\InvaildIPException;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 
@@ -29,7 +30,7 @@ class GeoIPService
                 'longitude' => $record->location->longitude,
             ];
         } catch (\Exception $e) {
-            return ['error' => $e->getMessage()];
+            throw new InvaildIPException();
         }
     }
 }
