@@ -15,4 +15,10 @@ class Chat extends Model
         'from_user_id',
         'to_user_id',
     ];
+
+    //Relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'from_user_id');
+    }
 }
